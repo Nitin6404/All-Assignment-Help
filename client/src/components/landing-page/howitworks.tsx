@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const HowItWorks: React.FC = () => {
   return (
-    <div className="bg-[#2BAFFC66] h-[820px] bg-cover md:px-10 flex flex-col md:flex-row items-center gap-[100px] mt-[50px] mb-[50px]">
+    <div className="bg-[#2BAFFC66] overflow-hidden h-[820px] bg-cover md:px-10 flex flex-col md:flex-row items-center gap-[100px] mt-[50px] mb-[50px]">
       <div>
         <Image
           src="/static/images/woman.svg"

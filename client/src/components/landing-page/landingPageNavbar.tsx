@@ -29,6 +29,10 @@ export default function LandingPageNavbar() {
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
+  const handleMouseEnter = () => {
+    setDropdownVisible(true);
+  };
+
   const handleLinkClick = (servicePath: string) => {
     setActiveService(servicePath);
     setDropdownVisible(false);
@@ -113,7 +117,11 @@ export default function LandingPageNavbar() {
               </span>
             </Link>
 
-            <div className="relative " ref={dropdownRef}>
+            <div
+              className="relative "
+              ref={dropdownRef}
+              onMouseEnter={handleMouseEnter}
+            >
               <button
                 onClick={handleDropdownToggle}
                 className={`flex items-center space-x-1 px-4 py-[22px] font-semibold ${
@@ -137,6 +145,7 @@ export default function LandingPageNavbar() {
                 }`}
               >
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                   
                   <ServiceColumn
                     title="Writing"
                     services={writingServices}
@@ -244,7 +253,8 @@ const ServiceColumn: React.FC<ServiceColumnProps> = ({
   onClick,
 }) => (
   <div>
-    <h3 className="font-bold text-md text-gray-900 mb-4">{title}</h3>
+    
+    <h3 className="font-bold font-poppins text-md text-gray-900 mb-4 mt-">{title}</h3>
     <ul className="space-y-1">
       {services.map((service, index) => {
         const servicePath = `/services/${title
@@ -254,7 +264,7 @@ const ServiceColumn: React.FC<ServiceColumnProps> = ({
           <li key={index}>
             <Link
               href={servicePath}
-              className={`block text-gray-700 hover:text-[#09b14f] ${
+              className={`block text-gray-600 font-poppins hover:text-[#09b14f] ${
                 activeService === servicePath ? "text-black font-semibold" : ""
               }`}
               onClick={() => onClick(servicePath)}
