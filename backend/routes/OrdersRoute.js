@@ -10,7 +10,7 @@ const fileFilter = (req, file, cb) => {
     if (extname) {
         return cb(null, true);
     } else {
-      cb("Invalid File Format");
+      cb("Invalid File Format");   
     }
 };
 
@@ -22,8 +22,9 @@ const upload = multer({
 
 router.post('/order', (req, res) => {
     const {title,desc,subject,type,deadline} = req.body
-    const id = Orders.newOrder(title,desc,subject,type,deadline)
-    res.status(200).json({"orderid":id});
+     console.log(req.body);
+   // const id = Orders.newOrder(title,desc,subject,type,deadline) // not working
+    res.status(200).json({"orderid":"id"});
 })
 
 router.post("/order/upload", upload.any(),(req,res)=>{
@@ -32,8 +33,8 @@ router.post("/order/upload", upload.any(),(req,res)=>{
         const original_file_name = file.originalname
         const file_name = file.filename
         const order_id = req.body.orderId
-        const id = Orders.newOrderFile(order_id,file_name,original_file_name)
-        res.send(200).json({"orderid":id})
+      //  const id = Orders.newOrderFile(order_id,file_name,original_file_name)  // not working 
+        res.send(200).json({"orderid":"id"})
     }
     else{
         res.sendStatus(404)

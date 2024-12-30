@@ -11,7 +11,7 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
 
 export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [orderId, setOrderId] = useState<string>("test_order_id : 2323523");
+  const [orderId, setOrderId] = useState<string>("test_order_id");
 
   return (
     <OrderContext.Provider value={{ orderId, setOrderId }}>

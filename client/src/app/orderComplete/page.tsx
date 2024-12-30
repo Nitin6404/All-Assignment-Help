@@ -9,6 +9,10 @@ const OrderComplete = () => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const handleGoToBtn = ()=>{
+     router.push("/order");
+  }
+
   useEffect(() => {
     if (orderId) {
       setLoading(false); 
@@ -52,7 +56,7 @@ const OrderComplete = () => {
           Assignment {orderId} Confirmed
         </div>
 
-        <button
+        <button   onClick={handleGoToBtn}
           className="w-full py-2 px-4 bg-[#55C360] text-white rounded-md hover:bg-green-600 transition-colors duration-200"
         >
           Go to Order

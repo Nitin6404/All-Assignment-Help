@@ -3,8 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { useOrder } from "../context/orderIdContext";
-import { useRouter } from "next/navigation"; 
-
+import { useRouter } from "next/navigation";
 
 interface User {
   title: string;
@@ -20,7 +19,7 @@ interface User {
 
 const AssignmentForm = () => {
   const [wordCount, setWordCount] = useState<number>(1500);
-  const { orderId, setOrderId } = useOrder();
+  const { setOrderId } = useOrder();
   const [user, setUser] = useState<User>({
     title: "",
     desc: "",
@@ -32,7 +31,6 @@ const AssignmentForm = () => {
     vCode: "",
     file: null,
   });
-
 
   const increaseWordCount = () => {
     setWordCount((prev) => prev + 100);
@@ -49,6 +47,7 @@ const AssignmentForm = () => {
       wordCount: Math.max(prevUser.wordCount - 100, 0),
     }));
   };
+
   const router = useRouter();
 
   const handleForm = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -60,26 +59,33 @@ const AssignmentForm = () => {
         subject: user.subject,
         type: user.type,
         deadline: user.deadline,
-      };
-      const response = await axios.post("", formData); // add api /order 
-      //console.log(formData);
+      };    
+
+      const response = await axios.post(
+        "http://localhost:4000/order",
+        formData
+      );
       if (response.status === 200) {
-        const neworderId = response.data.orderid;
-        setOrderId(neworderId); //for orderComplete component
-        //console.log("Order created with ID:", neworderId);
-        router.push("/orderComplete");  
-  
+        const newOrderId = response.data.orderid;
+        setOrderId(newOrderId);
+
         if (user.file) {
           const fileData = new FormData();
-          fileData.append("orderId", orderId);
+          fileData.append("orderId", newOrderId);
           fileData.append("file", user.file);
-          const fileResponse = await axios.post("", fileData); //add api /order/files
-          if (fileResponse.status === 200) { 
+
+          const fileResponse = await axios.post(
+            "http://localhost:4000/order/upload",
+            fileData
+          );
+          if (fileResponse.status === 200) {
             console.log("File uploaded successfully:", fileResponse.data);
           }
         }
-  
-        setUser({   //clear form 
+
+        router.push("/orderComplete");
+
+        setUser({
           title: "",
           desc: "",
           subject: "",
@@ -95,7 +101,7 @@ const AssignmentForm = () => {
       console.error("Error submitting form:", error);
     }
   };
-  
+
   return (
     <div className="max-w-4xl mx-auto p-2 py-10 ">
       <div className="flex items-center justify-between mb-6">
