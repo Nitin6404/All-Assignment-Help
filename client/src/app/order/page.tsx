@@ -59,7 +59,7 @@ const AssignmentForm = () => {
         subject: user.subject,
         type: user.type,
         deadline: user.deadline,
-      };    
+      };
 
       const response = await axios.post(
         "http://localhost:4000/order",
@@ -68,19 +68,27 @@ const AssignmentForm = () => {
       if (response.status === 200) {
         const newOrderId = response.data.orderid;
         setOrderId(newOrderId);
-
         if (user.file) {
-          const fileData = new FormData();
-          fileData.append("orderId", newOrderId);
-          fileData.append("file", user.file);
+          try {
+            const fileData = new FormData();
+            fileData.append("orderId", newOrderId);
+            fileData.append("file", user.file);
 
-          const fileResponse = await axios.post(
-            "http://localhost:4000/order/upload",
-            fileData
-          );
-          if (fileResponse.status === 200) {
-            console.log("File uploaded successfully:", fileResponse.data);
+            const response = await axios.post(
+              "http://localhost:4000/order/upload",
+              fileData
+            );
+
+            if (response.status === 200) {
+              console.log("File uploaded successfully:", response.data);
+            } else {
+              console.error("Upload failed with status:", response.status);
+            }
+          } catch (error) {
+            console.error("Error during file upload:", error);
           }
+        } else {
+          console.warn("No file to upload.");
         }
 
         router.push("/orderComplete");
@@ -225,9 +233,12 @@ const AssignmentForm = () => {
                 <input
                   type="file"
                   onChange={(e) => {
-                    const file = e.target.files;
+                    const file = e.target.files ? e.target.files[0] : null;
                     if (file) {
-                      console.log("Selected file:", file);
+                      setUser((prevUser) => ({
+                        ...prevUser,
+                        file: file, 
+                      }));
                     }
                   }}
                   className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#55C360] file:text-white hover:file:bg-[#45a350]"
