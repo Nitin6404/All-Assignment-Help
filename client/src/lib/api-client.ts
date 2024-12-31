@@ -20,11 +20,16 @@ export interface Order {
   desc: string;
   subject: string;
   type: string;
-  deadline: string;
-  status?: string;
-  teacherId?: number;
+  deadline: number;
+  details?: {
+    status: number;
+    teacher_id?: string;
+  };
   value?: number;
-  files?: OrderFile[];
+  files?: Array<{
+    file_name: string;
+    original_file_name: string;
+  }>;
 }
 
 export interface OrderFile {
@@ -33,9 +38,21 @@ export interface OrderFile {
   originalFilename: string;
 }
 
+export interface LoginData {
+  email: string;
+  password: string;
+}
+
 export interface LoginResponse {
   token: string;
   user: User;
+}
+
+export interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
 }
 
 export interface RegisterResponse {
@@ -80,7 +97,7 @@ export class ApiClient {
     this.token = null;
   }
 
-  setToken(token: string) {
+  setToken(token: string | null) {
     this.token = token;
   }
 
@@ -116,6 +133,18 @@ export class ApiClient {
         credentials: 'include', // Include cookies in requests
       });
 
+      // Handle token expiration
+      if (response.status === 401) {
+        // Clear the expired token
+        this.token = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        
+        // Redirect to login page
+        window.location.href = '/login?expired=true';
+        throw new Error('Session expired. Please log in again.');
+      }
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
         throw new ApiError(
@@ -140,7 +169,7 @@ export class ApiClient {
   }
 
   // Auth endpoints
-  async register(data: { name: string; email: string; password: string; confirmPassword: string }): Promise<RegisterResponse> {
+  async register(data: RegisterData): Promise<RegisterResponse> {
     const { confirmPassword, ...userData } = data;
     return this.request<RegisterResponse>('/user/add', {
       method: 'POST',
@@ -162,7 +191,7 @@ export class ApiClient {
     });
   }
 
-  async login(credentials: { email: string; password: string }): Promise<LoginResponse> {
+  async login(credentials: LoginData): Promise<LoginResponse> {
     try {
       const response = await this.request<LoginResponse>('/user/login', {
         method: 'POST',
@@ -208,6 +237,10 @@ export class ApiClient {
     }
 
     return { orderId: response.orderId };
+  }
+
+  async getAllUserOrders(): Promise<Order[]> {
+    return this.request<Order[]>('/user/orders');
   }
 
   async uploadOrderFiles(orderId: number, files: File[]): Promise<{ files: OrderFile[] }> {

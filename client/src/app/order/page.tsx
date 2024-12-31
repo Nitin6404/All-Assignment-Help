@@ -80,7 +80,7 @@ const AssignmentForm = () => {
         desc: user.desc,
         subject: user.subject,
         type: user.type,
-        deadline: user.deadline,
+        deadline: new Date(user.deadline).getTime(),
         couponCode: user.couponCode
       };
 

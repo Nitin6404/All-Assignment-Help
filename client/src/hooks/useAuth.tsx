@@ -1,61 +1,65 @@
-import { create } from 'zustand';
-import Cookies from 'js-cookie';
-import { apiClient, User } from '@/lib/api-client';
+import { useState, useEffect, useRef } from 'react';
+import { apiClient, User, LoginData, RegisterData, ApiClient } from '@/lib/api-client';
 
 interface AuthState {
   user: User | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  login: (credentials: { email: string; password: string }) => Promise<void>;
+  token: string | null;
+  apiClient: ApiClient;
+  login: (data: LoginData) => Promise<void>;
   logout: () => Promise<void>;
-  register: (data: { name: string; email: string; password: string; confirmPassword: string }) => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
 }
 
-export const useAuth = create<AuthState>((set) => ({
-  user: null,
-  isLoading: false,
-  isAuthenticated: false,
+export function useAuth(): AuthState {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const apiClientRef = useRef<ApiClient>(apiClient);
 
-  login: async (credentials) => {
-    set({ isLoading: true });
-    try {
-      const response = await apiClient.login(credentials);
-      const { token, user } = response;
-      Cookies.set('token', token);
-      apiClient.setToken(token);
-      set({ user, isAuthenticated: true });
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
-    } finally {
-      set({ isLoading: false });
+  useEffect(() => {
+    // Initialize from localStorage
+    const storedToken = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+    
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+      apiClientRef.current.setToken(storedToken);
     }
-  },
+  }, []);
 
-  logout: async () => {
-    set({ isLoading: true });
-    try {
-      await apiClient.logout();
-      Cookies.remove('token');
-      set({ user: null, isAuthenticated: false });
-    } catch (error) {
-      throw error;
-    } finally {
-      set({ isLoading: false });
-    }
-  },
+  const login = async (data: LoginData) => {
+    const response = await apiClientRef.current.login(data);
+    setToken(response.token);
+    setUser(response.user);
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('user', JSON.stringify(response.user));
+    apiClientRef.current.setToken(response.token);
+  };
 
-  register: async (data) => {
-    set({ isLoading: true });
-    try {
-      const response = await apiClient.register(data);
-      const { token, user } = response;
-      Cookies.set('token', token);
-      set({ user, isAuthenticated: true });
-    } catch (error) {
-      throw error;
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-}));
+  const logout = async () => {
+    await apiClientRef.current.logout();
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    apiClientRef.current.setToken(null);
+  };
+
+  const register = async (data: RegisterData) => {
+    const response = await apiClientRef.current.register(data);
+    setToken(response.token);
+    setUser(response.user);
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('user', JSON.stringify(response.user));
+    apiClientRef.current.setToken(response.token);
+  };
+
+  return {
+    user,
+    token,
+    apiClient: apiClientRef.current,
+    login,
+    logout,
+    register,
+  };
+}

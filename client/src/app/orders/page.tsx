@@ -1,138 +1,101 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from 'react';
-import { apiClient } from '@/lib/api-client';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Loader2 } from 'lucide-react';
-
-interface Order {
-  orderid: number;
-  title: string;
-  desc: string;
-  subject: string;
-  type: string;
-  deadline: number;
-  details?: {
-    status: number;
-    teacher_id?: string;
-  };
-  value?: {
-    value: number;
-  };
-  files?: Array<{
-    file_name: string;
-    original_file_name: string;
-  }>;
-}
-
-const statusMap: Record<number, { label: string; color: string }> = {
-  0: { label: 'Pending', color: 'bg-yellow-500' },
-  1: { label: 'In Progress', color: 'bg-blue-500' },
-  2: { label: 'Completed', color: 'bg-green-500' },
-  3: { label: 'Cancelled', color: 'bg-red-500' },
-};
+import { useAuth } from '@/hooks/useAuth';
+import { useToaster } from '@/hooks/useToaster';
+import { Order } from '@/lib/types';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user, apiClient } = useAuth();
   const router = useRouter();
+  const toast = useToaster();
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const orders = await apiClient.getAllOrders();
-        setOrders(orders);
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    if (!user) {
+      router.push('/login');
+      return;
+    }
     fetchOrders();
-  }, []);
+  }, [user, router]);
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const fetchOrders = async () => {
+    try {
+      const userOrders = await apiClient.getAllUserOrders();
+      setOrders(userOrders);
+    } catch (error) {
+      toast.error('Failed to fetch orders');
+      console.error('Error fetching orders:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  if (orders.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h2 className="text-2xl font-semibold mb-4">No Orders Found</h2>
+        <p className="text-gray-600 mb-6">You haven't placed any orders yet.</p>
+        <button
+          onClick={() => router.push('/order')}
+          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+        >
+          Place Your First Order
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">My Orders</h1>
-        <Button onClick={() => router.push('/order')}>New Order</Button>
+        <button
+          onClick={() => router.push('/order')}
+          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+        >
+          New Order
+        </button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {orders.map((order) => (
-          <Card key={order.orderid} className="flex flex-col">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl">#{order.orderid}</CardTitle>
-                <Badge className={statusMap[order.details?.status ?? 0].color}>
-                  {statusMap[order.details?.status ?? 0].label}
-                </Badge>
+          <div
+            key={order.orderId}
+            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+          >
+            <h3 className="text-xl font-semibold mb-2">{order.title}</h3>
+            <p className="text-gray-600 mb-4 line-clamp-2">{order.desc}</p>
+            <div className="flex justify-between items-center text-sm text-gray-500">
+              <span>Subject: {order.subject}</span>
+              <span>Type: {order.type}</span>
+            </div>
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">
+                  Due: {new Date(order.deadline).toLocaleDateString()}
+                </span>
+                <button
+                  onClick={() => router.push(`/orders/${order.orderId}`)}
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  View Details →
+                </button>
               </div>
-              <CardDescription className="mt-2 line-clamp-1">{order.title}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              <div className="space-y-2">
-                <p className="text-sm text-gray-500">
-                  <span className="font-semibold">Subject:</span> {order.subject}
-                </p>
-                <p className="text-sm text-gray-500">
-                  <span className="font-semibold">Type:</span> {order.type}
-                </p>
-                <p className="text-sm text-gray-500">
-                  <span className="font-semibold">Deadline:</span> {formatDate(order.deadline)}
-                </p>
-                {order.value?.value && (
-                  <p className="text-sm text-gray-500">
-                    <span className="font-semibold">Value:</span> ${order.value.value}
-                  </p>
-                )}
-                <p className="text-sm text-gray-500">
-                  <span className="font-semibold">Files:</span>{' '}
-                  {order.files?.length ?? 0} attached
-                </p>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => router.push(`/orders/${order.orderid}`)}
-              >
-                View Details
-              </Button>
-            </CardFooter>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
-
-      {orders.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8">
-          <p className="mb-4 text-lg text-gray-500">No orders found</p>
-          <Button onClick={() => router.push('/order')}>Create Your First Order</Button>
-        </div>
-      )}
     </div>
   );
 }
