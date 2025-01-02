@@ -12,7 +12,8 @@ export default function LandingPageNavbar() {
   const [isMobileMenuVisible, setMobileMenuVisible] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
-  const auth = useAuth();
+  const { user, isLoading, logout } = useAuth();
+  console.log(user);
   const router = useRouter();
 
   const handleDropdownToggle = () => {
@@ -48,7 +49,9 @@ export default function LandingPageNavbar() {
 
   const handleLogout = async () => {
     try {
-      await auth.logout();
+      await logout();
+      // need to refresh the page
+      window.location.reload();
       router.push('/login');
     } catch (error) {
       console.error('Error during logout:', error);
@@ -103,7 +106,8 @@ export default function LandingPageNavbar() {
               src="/static/images/logoNew.png"
               alt="AllAssignmentHelp"
               width={190}
-              height={10}
+              height={50}
+              style={{ height: 'auto' }}
               priority
             />
           </Link>
@@ -210,13 +214,19 @@ export default function LandingPageNavbar() {
           </div>
 
           <div className="flex items-center space-x-4 mr-10">
-            {auth.isAuthenticated ? (
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-300"
-              >
-                Logout
-              </button>
+            {isLoading ? (
+              <div className="animate-pulse">
+                <div className="h-8 w-20 bg-gray-200 rounded"></div>
+              </div>
+            ) : user ? (
+              <>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-300"
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <Link
                 href="/login"
@@ -246,7 +256,11 @@ export default function LandingPageNavbar() {
       {isMobileMenuVisible && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-lg py-4">
           <div className="flex flex-col space-y-4">
-            {auth.isAuthenticated ? (
+            {isLoading ? (
+              <div className="animate-pulse">
+                <div className="h-8 w-20 bg-gray-200 rounded mx-4"></div>
+              </div>
+            ) : user ? (
               <button
                 onClick={handleLogout}
                 className="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"

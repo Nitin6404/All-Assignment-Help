@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS orders (
     descrip VARCHAR(1500) NOT NULL,
     sub VARCHAR(64) NOT NULL,
     typ VARCHAR(64) NOT NULL,
-    deadline INTEGER NOT NULL
+    deadline INTEGER NOT NULL,
+    created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))
 );
 
 CREATE TABLE IF NOT EXISTS orders_file (

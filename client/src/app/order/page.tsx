@@ -28,6 +28,7 @@ const ALLOWED_FILE_TYPES = [
 
 const AssignmentForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [descError, setDescError] = useState('');
   const router = useRouter();
 
   const [user, setUser] = useState<User>({
@@ -56,11 +57,32 @@ const AssignmentForm = () => {
     if (!user.subject.trim()) return "Subject is required";
     if (!user.type.trim()) return "Type is required";
     if (!user.deadline) return "Deadline is required";
+    
+    const selectedDate = new Date(user.deadline);
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < currentDate) {
+      return "Deadline cannot be in the past";
+    }
 
     const fileError = validateFile(user.file);
     if (fileError) return fileError;
 
     return null;
+  };
+
+  const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setUser({ ...user, desc: value });
+    
+    if (value.length === 0) {
+      setDescError('Description is required');
+    } else if (value.length < 15) {
+      setDescError(`${15 - value.length} more characters needed`);
+    } else {
+      setDescError('');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -75,13 +97,13 @@ const AssignmentForm = () => {
         return;
       }
 
+      // Map the field names to match backend API expectations
       const orderData = {
         title: user.title,
-        desc: user.desc,
-        subject: user.subject,
-        type: user.type,
-        deadline: new Date(user.deadline).getTime(),
-        couponCode: user.couponCode
+        desc: user.desc,        // Backend expects 'desc'
+        subject: user.subject,  // Backend expects 'subject'
+        type: user.type,        // Backend expects 'type'
+        deadline: user.deadline // Send the ISO date string directly
       };
 
       console.log('Creating order with data:', orderData);
@@ -94,7 +116,9 @@ const AssignmentForm = () => {
         if (user.file) {
           try {
             console.log('Uploading file for order:', response.orderId);
-            await apiClient.uploadOrderFiles(response.orderId, [user.file]);
+            const formData = new FormData();
+            formData.append('file', user.file);
+            await apiClient.uploadOrderFiles(response.orderId, formData);
             console.log('File upload successful');
           } catch (uploadError) {
             console.error('File upload failed:', uploadError);
@@ -213,14 +237,16 @@ const AssignmentForm = () => {
               </label>
               <textarea
                 value={user.desc}
-                onChange={(e) => setUser({ ...user, desc: e.target.value })}
+                onChange={handleDescChange}
                 required
                 placeholder="For Example, write a 250-word essay exploring the relationship between artificial intelligence (AI) and human beings. Focus on how AI complements human creativity, decision-making, and problem-solving abilities..."
-                className="w-full border-2  border-[#010101a2] rounded-xl text-[14px] p-2 h-32"
+                className={`w-full border-2 ${descError ? 'border-red-500' : 'border-[#010101a2]'} rounded-xl text-[14px] p-2 h-32`}
               ></textarea>
-              <p className="text-xs text-[#605E5E] mt-1">
-                Min. 15 Characters Required
-              </p>
+              <div className="flex justify-between items-center mt-1">
+                <p className={`text-xs ${descError ? 'text-red-500' : 'text-[#605E5E]'}`}>
+                  {descError || `${user.desc.length} / 15 characters minimum`}
+                </p>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>

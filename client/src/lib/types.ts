@@ -13,17 +13,18 @@ export interface LoginCredentials {
 }
 
 export interface Order {
-  orderId: number;
+  orderid: number;
+  userId: number;
   title: string;
-  desc: string;
+  description: string;
   subject: string;
   type: string;
   deadline: number;
-  details?: {
-    status: number;
-    teacher_id?: string;
-  };
+  status: number;
+  createdAt: string;
+  updatedAt: string;
   value?: number;
+  teacherId?: number;
   files?: Array<{
     file_name: string;
     original_file_name: string;

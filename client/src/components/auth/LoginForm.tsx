@@ -1,25 +1,28 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import toast from "react-hot-toast";
 import { useAuth } from "@/hooks/useAuth";
+import type { LoginCredentials } from "@/types/auth";
+import { AUTH_ERRORS, AUTH_STATUS } from "@/types/auth";
 
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+  email: z.string().email(AUTH_ERRORS.INVALID_EMAIL),
+  password: z.string().min(6, AUTH_ERRORS.WEAK_PASSWORD),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
+  const router = useRouter();
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
   });
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,12 +30,48 @@ export default function LoginForm() {
 
     try {
       const validatedData = loginSchema.parse(formData);
-      await login(validatedData);
-      toast.success("Login successful!");
+      const credentials: LoginCredentials = {
+        email: validatedData.email,
+        password: validatedData.password,
+      };
+      
+      const response = await login(credentials);
+
+      // need a refresh page after login
+      window.location.reload();
+      
+      if ('error' in response) {
+        const status = response.status || AUTH_STATUS.SERVER_ERROR;
+        switch (status) {
+          case AUTH_STATUS.USER_NOT_FOUND:
+            toast.error(AUTH_ERRORS.USER_NOT_FOUND);
+            break;
+          case AUTH_STATUS.INVALID_CREDENTIALS:
+            toast.error(AUTH_ERRORS.INVALID_CREDENTIALS);
+            break;
+          case AUTH_STATUS.VALIDATION_ERROR:
+            toast.error(AUTH_ERRORS.VALIDATION_ERROR);
+            break;
+          case AUTH_STATUS.SERVER_ERROR:
+            toast.error(AUTH_ERRORS.SERVER_ERROR);
+            break;
+          default:
+            toast.error(response.error || AUTH_ERRORS.SERVER_ERROR);
+        }
+        return;
+      }
+
+      toast.success(`Welcome back, ${response.user.name}!`);
       router.push("/");
-    } catch (error) {
-      console.error("Login error:", error);
-      toast.error("Login failed. Please check your credentials.");
+    } catch (error: any) {
+      if (error.errors) {
+        // Handle Zod validation errors
+        error.errors.forEach((err: { message: string }) => {
+          toast.error(err.message);
+        });
+      } else {
+        toast.error(AUTH_ERRORS.SERVER_ERROR);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -72,6 +111,7 @@ export default function LoginForm() {
                 required
                 value={formData.email}
                 onChange={handleChange}
+                disabled={isLoading}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -103,6 +143,7 @@ export default function LoginForm() {
                 required
                 value={formData.password}
                 onChange={handleChange}
+                disabled={isLoading}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -112,22 +153,12 @@ export default function LoginForm() {
             <button
               type="submit"
               disabled={isLoading}
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Signing in..." : "Sign in"}
             </button>
           </div>
         </form>
-
-        <p className="mt-10 text-center text-sm text-gray-500">
-          Not a member?{" "}
-          <a
-            href="#"
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-          >
-            Start a 14 day free trial
-          </a>
-        </p>
       </div>
     </div>
   );

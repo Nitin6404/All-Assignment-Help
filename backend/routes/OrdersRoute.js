@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const multer = require('multer');
+const fs = require('fs'); // Add this line
 const { body, validationResult } = require('express-validator');
 const auth = require('../middleware/auth');
 const Orders = require('../models/Orders');
@@ -9,7 +10,14 @@ const logger = require('../utils/logger');
 
 // Configure multer for file upload
 const storage = multer.diskStorage({
-    destination: process.env.UPLOAD_DIR || 'uploads/',
+    destination: (req, file, cb) => {
+        const orderId = req.params.orderId;
+        const uploadDir = path.join(process.env.UPLOAD_DIR || 'uploads', `assignment_${orderId}`);
+        
+        // Create directory if it doesn't exist
+        fs.mkdirSync(uploadDir, { recursive: true });
+        cb(null, uploadDir);
+    },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
@@ -53,10 +61,21 @@ router.post('/order', auth, express.json(), validateOrder, async (req, res) => {
         }
 
         const { title, desc, subject, type, deadline } = req.body;
+        const userId = req.user.id;
+
+        logger.info('Creating order with data:', { 
+            title, 
+            subject, 
+            type, 
+            deadline,
+            userId
+        });
+
         const ordersModel = new Orders();
         
         try {
-            const orderId = await ordersModel.newOrder(title, desc, subject, type, deadline);
+            const orderId = await ordersModel.newOrder(title, desc, subject, type, deadline, userId);
+            logger.info('Order created successfully:', { orderId });
             res.status(201).json({ 
                 message: 'Order created successfully',
                 orderId 
@@ -104,12 +123,22 @@ router.post('/order/:orderId/files', auth, upload.array('files', 5), async (req,
 // Get all orders for a user
 router.get('/orders', auth, async (req, res) => {
     try {
+        const userId = req.user.id;
+        logger.info('Fetching orders for user:', { userId });
+
+        if (!userId) {
+            logger.error('No user ID found in request');
+            return res.status(401).json({ error: 'User ID is required' });
+        }
+
         const ordersModel = new Orders();
-        const orders = await ordersModel.getAllOrders();
-        res.status(200).json(orders);
+        const orders = await ordersModel.getAllUserOrders(userId);
+        
+        logger.info('Orders fetched successfully:', { count: orders.length });
+        res.json(orders);
     } catch (error) {
-        logger.error('Error getting orders:', error);
-        res.status(500).json({ error: error.message || 'Failed to get orders' });
+        logger.error('Error fetching orders:', error);
+        res.status(500).json({ error: 'Failed to fetch orders' });
     }
 });
 

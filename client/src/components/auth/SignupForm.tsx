@@ -6,15 +6,17 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { apiClient } from "@/lib/api-client";
+import type { AuthResult, RegisterCredentials } from "@/types/auth";
+import { AUTH_ERRORS, AUTH_STATUS } from "@/types/auth";
 
 // Validation schema
 const signupSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  name: z.string().min(2, AUTH_ERRORS.WEAK_PASSWORD),
+  email: z.string().email(AUTH_ERRORS.INVALID_EMAIL),
+  password: z.string().min(6, AUTH_ERRORS.WEAK_PASSWORD),
   confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: AUTH_ERRORS.PASSWORD_MISMATCH,
   path: ["confirmPassword"],
 });
 
@@ -37,23 +39,75 @@ export default function SignupForm() {
 
     try {
       const validatedData = signupSchema.parse(formData);
-      const response = await apiClient.register({
+      
+      const credentials: RegisterCredentials = {
         name: validatedData.name,
         email: validatedData.email,
         password: validatedData.password,
         confirmPassword: validatedData.confirmPassword,
-      });
-      
+      };
+
+      const response = await apiClient.register(credentials);
+
+      if ('error' in response || response.error) {
+        // Handle specific error cases
+        switch (response.status) {
+          case AUTH_STATUS.USER_EXISTS:
+            toast.error(AUTH_ERRORS.USER_EXISTS);
+            break;
+          case AUTH_STATUS.VALIDATION_ERROR:
+            toast.error(AUTH_ERRORS.VALIDATION_ERROR);
+            break;
+          case AUTH_STATUS.SERVER_ERROR:
+            toast.error(AUTH_ERRORS.SERVER_ERROR);
+            break;
+          default:
+            toast.error(response.error || AUTH_ERRORS.SERVER_ERROR);
+        }
+        return;
+      }
+
+      // If we have a successful response with token and user
       if (response.token && response.user) {
-        toast.success("Registration successful!");
+        // Auto login after successful registration
+        const loginResponse = await apiClient.login({
+          email: validatedData.email,
+          password: validatedData.password
+        });
+
+        if ('error' in loginResponse || loginResponse.error) {
+          toast.error("Registration successful but auto-login failed. Please login manually.");
+          router.push("/login");
+          return;
+        }
+
+        toast.success("Registration successful! Welcome to our platform.");
         router.push("/");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Registration error:", error);
-      toast.error("Registration failed. Please try again.");
+      
+      if (error.errors) {
+        // Handle Zod validation errors
+        error.errors.forEach((err: { message: string }) => {
+          toast.error(err.message);
+        });
+      } else if (error instanceof Error) {
+        toast.error(error.message || AUTH_ERRORS.SERVER_ERROR);
+      } else {
+        toast.error(AUTH_ERRORS.SERVER_ERROR);
+      }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   return (
@@ -69,7 +123,8 @@ export default function SignupForm() {
             className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Full Name"
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={handleChange}
+            disabled={isLoading}
             aria-label="Full Name"
           />
         </div>
@@ -84,7 +139,8 @@ export default function SignupForm() {
             className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Email address"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={handleChange}
+            disabled={isLoading}
             aria-label="Email address"
           />
         </div>
@@ -99,7 +155,8 @@ export default function SignupForm() {
             className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Password"
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            onChange={handleChange}
+            disabled={isLoading}
             aria-label="Password"
           />
         </div>
@@ -114,7 +171,8 @@ export default function SignupForm() {
             className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Confirm Password"
             value={formData.confirmPassword}
-            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+            onChange={handleChange}
+            disabled={isLoading}
             aria-label="Confirm Password"
           />
         </div>
@@ -125,28 +183,8 @@ export default function SignupForm() {
           type="submit"
           disabled={isLoading}
           className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          aria-label={isLoading ? "Creating account..." : "Sign up"}
         >
-          {isLoading ? (
-            <>
-              <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              </span>
-              Creating account...
-            </>
-          ) : (
-            <>
-              <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                <svg className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                </svg>
-              </span>
-              Sign up
-            </>
-          )}
+          {isLoading ? "Signing up..." : "Sign up"}
         </button>
       </div>
     </form>

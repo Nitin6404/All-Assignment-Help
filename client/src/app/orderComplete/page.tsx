@@ -2,6 +2,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { Check } from "lucide-react";
 
 const OrderComplete = () => {
   const searchParams = useSearchParams();
@@ -34,11 +35,8 @@ const OrderComplete = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-white p-6">
       <div className="text-center mb-8">
         <div className="mx-auto w-24">
-          <img
-            src="/success.gif"
-            alt="Success"
-            className="w-full h-full object-contain"
-          />
+          {/* For the checkmark icon */}
+          <Check className="text-green-600" />
         </div>
         <h1 className="text-2xl font-semibold text-green-600 mt-8 mb-4">
           Order Created Successfully!
