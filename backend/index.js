@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 const logger = require('./utils/logger');
 const errorHandler = require('./middleware/errorHandler');
 const ensureDirectories = require('./utils/ensureDirectories');
@@ -24,7 +25,6 @@ app.use(helmet());
 app.use(cors({
   origin: [
     process.env.FRONTEND_URL,
-    'http://localhost:3000',
     'http://localhost:3002',
     'https://all-assignment-help.vercel.app'
   ],
@@ -35,6 +35,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Rate limiting
 const limiter = rateLimit({
@@ -54,6 +55,11 @@ app.get('/health', (req, res) => {
 });
 
 // Error handling
+app.use((err, req, res, next) => {
+    logger.error('Global error handler:', err);
+    res.status(500).json({ error: 'Internal server error' });
+});
+
 app.use(errorHandler);
 
 // Handle 404
@@ -63,4 +69,16 @@ app.use((req, res) => {
 
 app.listen(port, () => {
     logger.info(`Server running on port ${port}`);
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+    logger.error('Uncaught Exception:', error);
+    process.exit(1);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+    logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    process.exit(1);
 });

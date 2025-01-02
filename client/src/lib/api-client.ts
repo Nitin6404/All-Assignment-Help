@@ -1,46 +1,12 @@
 import { validateEnv } from './env';
+import { User, AuthResponse, AuthResult, LoginCredentials as LoginData, RegisterCredentials as RegisterData } from '@/types/auth';
+import { Order, OrderFile, OrderResponse, OrderFilesResponse } from '@/types/order';
 
-// Response types
 interface ApiResponse<T = any> {
   success?: boolean;
   data?: T;
   error?: string;
-}
-
-export interface User {
-  id: number;
-  email: string;
-  name: string;
-  role: 'user' | 'admin';
-}
-
-export interface Order {
-  orderId: number;
-  title: string;
-  desc: string;
-  subject: string;
-  type: string;
-  deadline: string;
-  status?: string;
-  teacherId?: number;
-  value?: number;
-  files?: OrderFile[];
-}
-
-export interface OrderFile {
-  fileId: number;
-  filename: string;
-  originalFilename: string;
-}
-
-export interface LoginResponse {
-  token: string;
-  user: User;
-}
-
-export interface RegisterResponse {
-  token: string;
-  user: User;
+  status?: number;
 }
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -50,24 +16,6 @@ interface RequestOptions {
   body?: any;
   headers?: Record<string, string>;
   isFormData?: boolean;
-}
-
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    public status: number,
-    public data?: any
-  ) {
-    super(message);
-    this.name = 'ApiError';
-  }
-}
-
-export class NetworkError extends Error {
-  constructor(message: string, public originalError: Error) {
-    super(message);
-    this.name = 'NetworkError';
-  }
 }
 
 export class ApiClient {
@@ -80,7 +28,7 @@ export class ApiClient {
     this.token = null;
   }
 
-  setToken(token: string) {
+  setToken(token: string | null) {
     this.token = token;
   }
 
@@ -113,113 +61,105 @@ export class ApiClient {
         method,
         headers: requestHeaders,
         body: isFormData ? body : body ? JSON.stringify(body) : undefined,
-        credentials: 'include', // Include cookies in requests
+        credentials: 'include',
       });
 
+      const data = await response.json().catch(() => null);
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new ApiError(
-          errorData?.message || 'An error occurred',
-          response.status,
-          errorData
-        );
+        const errorStatus = response.status;
+        let errorMessage = data?.error || 'An error occurred';
+        
+        return {
+          error: errorMessage,
+          status: errorStatus
+        } as T;
       }
 
-      const data = await response.json();
-      console.log('API Response:', data); // Debug log
-      return data;
+      return data as T;
     } catch (error) {
-      if (error instanceof ApiError) {
-        throw error;
-      }
-      throw new NetworkError(
-        'Network request failed',
-        error instanceof Error ? error : new Error(String(error))
-      );
+      return {
+        error: error instanceof Error ? error.message : 'An unexpected error occurred',
+        status: 500
+      } as T;
     }
   }
 
   // Auth endpoints
-  async register(data: { name: string; email: string; password: string; confirmPassword: string }): Promise<RegisterResponse> {
-    const { confirmPassword, ...userData } = data;
-    return this.request<RegisterResponse>('/user/add', {
+  async register(data: RegisterData): Promise<AuthResult> {
+    return this.request<AuthResult>('/user/add', {
       method: 'POST',
-      body: userData,
+      body: data,
     });
   }
 
-  async updateContact(userId: string, contact: string): Promise<{ userid: string }> {
-    return this.request<{ userid: string }>('/user/update-contact', {
+  async login(credentials: LoginData): Promise<AuthResult> {
+    return this.request<AuthResult>('/user/login', {
       method: 'POST',
-      body: { userid: userId, contact },
+      body: credentials,
     });
-  }
-
-  async updatePassword(userId: string, password: string): Promise<{ userid: string }> {
-    return this.request<{ userid: string }>('/user/update-password', {
-      method: 'POST',
-      body: { userid: userId, password },
-    });
-  }
-
-  async login(credentials: { email: string; password: string }): Promise<LoginResponse> {
-    try {
-      const response = await this.request<LoginResponse>('/user/login', {
-        method: 'POST',
-        body: credentials,
-      });
-      if (response.token) {
-        this.setToken(response.token);
-      }
-      return response;
-    } catch (error) {
-      console.error('Login request failed:', error);
-      throw error;
-    }
   }
 
   async logout(): Promise<void> {
     await this.request<void>('/user/logout', {
-      method: 'POST',
+      method: 'POST'
     });
     this.clearToken();
   }
 
-  async getCurrentUser(): Promise<User> {
-    return this.request<User>('/auth/me');
+  async getUserByToken(): Promise<AuthResult> {
+    return this.request<AuthResult>('/user/me');
   }
 
   async updateProfile(data: Partial<User>): Promise<User> {
-    return this.request<User>('/auth/profile', {
+    return this.request<User>('/user/profile', {
       method: 'PUT',
       body: data,
     });
   }
 
   // Order endpoints
-  async createOrder(orderData: Omit<Order, 'orderId'>): Promise<{ orderId: number }> {
-    const response = await this.request<{ message: string; orderId: number }>('/order', {
+  async getAllUserOrders(): Promise<Order[]> {
+    const response = await this.request<Order[]>('/orders');
+    return response;
+  }
+
+  async getOrderById(orderId: number): Promise<Order> {
+    const response = await this.request<Order>(`/order/${orderId}`);
+    return response;
+  }
+
+  async createOrder(orderData: {
+    title: string;
+    desc: string;     // Backend expects 'desc'
+    subject: string;  // Backend expects 'subject'
+    type: string;     // Backend expects 'type'
+    deadline: string; // Changed to string for ISO date
+  }): Promise<{ orderId: number }> {
+    const response = await this.request<{ orderId: number }>('/order', {
       method: 'POST',
       body: orderData,
     });
-
-    if (!response.orderId) {
-      throw new Error('No order ID received from server');
-    }
-
-    return { orderId: response.orderId };
+    return response;
   }
 
-  async uploadOrderFiles(orderId: number, files: File[]): Promise<{ files: OrderFile[] }> {
-    const formData = new FormData();
-    formData.append('orderId', orderId.toString());
-    files.forEach(file => formData.append('files', file));
-
-    return this.request<{ files: OrderFile[] }>(`/order/${orderId}/files`, {
+  async uploadOrderFiles(orderId: number, files: FormData): Promise<ApiResponse> {
+    return this.request<ApiResponse>(`/orders/${orderId}/files`, {
       method: 'POST',
-      body: formData,
+      body: files,
       isFormData: true,
     });
+  }
+
+  async updateOrderStatus(orderId: number, status: number): Promise<ApiResponse> {
+    return this.request<ApiResponse>(`/orders/${orderId}/status`, {
+      method: 'PATCH',
+      body: { status },
+    });
+  }
+
+  async getOrderFiles(orderId: number): Promise<OrderFile[]> {
+    return this.request<OrderFile[]>(`/order/${orderId}/files`);
   }
 
   // User endpoints
@@ -236,22 +176,15 @@ export class ApiClient {
     return this.request<Order[]>('/admin/orders');
   }
 
-  async updateOrderStatus(orderId: number, status: string): Promise<void> {
-    return this.request<void>(`/admin/orders/${orderId}/status`, {
-      method: 'PUT',
-      body: { status },
-    });
-  }
-
   async assignTeacher(orderId: number, teacherId: number): Promise<void> {
-    return this.request<void>(`/admin/orders/${orderId}/teacher`, {
+    await this.request<void>(`/admin/orders/${orderId}/assign`, {
       method: 'PUT',
       body: { teacherId },
     });
   }
 
   async updateOrderValue(orderId: number, value: number): Promise<void> {
-    return this.request<void>(`/admin/orders/${orderId}/value`, {
+    await this.request<void>(`/admin/orders/${orderId}/value`, {
       method: 'PUT',
       body: { value },
     });
@@ -260,10 +193,3 @@ export class ApiClient {
 
 // Create a singleton instance
 export const apiClient = new ApiClient();
-
-// Export types
-export type {
-  ApiResponse,
-  RequestMethod,
-  RequestOptions,
-};

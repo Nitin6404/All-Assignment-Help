@@ -2471,3 +2471,196 @@ Metadata: {
   "__augmented": true,
   "stack": "Error: SQLITE_ERROR: no such table: order_value\n--> in Database#get('SELECT value FROM order_value WHERE orderid = ?', [ 1 ], [Function (anonymous)])\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:55:21\n    at new Promise (<anonymous>)\n    at Database.get (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:54:16)\n    at Orders.getOrderValueByID (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Orders.js:126:34)\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Orders.js:75:30\n    at Array.map (<anonymous>)\n    at Orders.getAllOrders (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Orders.js:72:24)\n    at async C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\routes\\OrdersRoute.js:108:24"
 }
+2025-01-02 09:40:05 [error] : Error creating user
+Metadata: {
+  "error": "SQLITE_CONSTRAINT: UNIQUE constraint failed: users.email",
+  "email": "nc1575612@gmail.com"
+}
+2025-01-02 09:40:05 [error] : [POST] /user/add - Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: users.email
+Metadata: {
+  "error": "Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: users.email\n--> in Statement#run([\n  'Nitin Chaudhary',\n  'nc1575612@gmail.com',\n  '$2a$10$WrvtaZVQmHxa1oSexj/1BOmGX./ltOX7tXTa66U8oKQXvVbm1DKgi',\n  'user',\n  '2025-01-02T04:10:05.706Z',\n  '2025-01-02T04:10:05.706Z'\n], [Function: replacement])\n    at Database.<anonymous> (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\sqlite3\\lib\\sqlite3.js:76:19)\n    at Database.<anonymous> (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\sqlite3\\lib\\sqlite3.js:20:19)\n    at logger.error.error (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\User.js:34:23)\n    at new Promise (<anonymous>)\n    at User.newUser (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\User.js:33:20)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:459:9)\n    at async C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\routes\\UserRoute.js:22:24",
+  "body": {
+    "name": "Nitin Chaudhary",
+    "email": "nc1575612@gmail.com",
+    "password": "W6w4wEcVTs:fv-G"
+  },
+  "params": {},
+  "query": {}
+}
+2025-01-02 09:40:21 [error] : Error creating user
+Metadata: {
+  "error": "SQLITE_CONSTRAINT: UNIQUE constraint failed: users.email",
+  "email": "nc1575612@gmail.com"
+}
+2025-01-02 09:40:21 [error] : [POST] /user/add - Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: users.email
+Metadata: {
+  "error": "Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: users.email\n--> in Statement#run([\n  'Nitin Chaudhary',\n  'nc1575612@gmail.com',\n  '$2a$10$3.LPh0Ng/FdIAiLFBMGpheBCmQZodpEmRavWtYEbO/DPbNq5oSPom',\n  'user',\n  '2025-01-02T04:10:21.792Z',\n  '2025-01-02T04:10:21.792Z'\n], [Function: replacement])\n    at Database.<anonymous> (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\sqlite3\\lib\\sqlite3.js:76:19)\n    at Database.<anonymous> (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\sqlite3\\lib\\sqlite3.js:20:19)\n    at logger.error.error (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\User.js:34:23)\n    at new Promise (<anonymous>)\n    at User.newUser (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\User.js:33:20)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:459:9)\n    at async C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\routes\\UserRoute.js:22:24",
+  "body": {
+    "name": "Nitin Chaudhary",
+    "email": "nc1575612@gmail.com",
+    "password": "W6w4wEcVTs:fv-G"
+  },
+  "params": {},
+  "query": {}
+}
+2025-01-02 10:28:22 [error] : [POST] /user/login - Error: userModel.generateAuthToken is not a function
+Metadata: {
+  "error": "TypeError: userModel.generateAuthToken is not a function\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\routes\\UserRoute.js:95:33\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:459:9)",
+  "body": {
+    "email": "test@example.com",
+    "password": "password123"
+  },
+  "params": {},
+  "query": {}
+}
+2025-01-02 10:28:27 [error] : [POST] /user/login - Error: userModel.generateAuthToken is not a function
+Metadata: {
+  "error": "TypeError: userModel.generateAuthToken is not a function\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\routes\\UserRoute.js:95:33\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:459:9)",
+  "body": {
+    "email": "test@example.com",
+    "password": "password123"
+  },
+  "params": {},
+  "query": {}
+}
+2025-01-02 10:53:01 [error] : [POST] /user/login - Error: userModel.generateAuthToken is not a function
+Metadata: {
+  "error": "TypeError: userModel.generateAuthToken is not a function\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\routes\\UserRoute.js:123:33\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:459:9)",
+  "body": {
+    "email": "test@example.com",
+    "password": "password123"
+  },
+  "params": {},
+  "query": {}
+}
+2025-01-02 11:03:51 [error] : Auth middleware error
+Metadata: {
+  "error": "Cannot read properties of undefined (reading 'token')"
+}
+2025-01-02 11:38:54 [error] : Token verification failed
+Metadata: {
+  "error": "jwt expired"
+}
+2025-01-02 11:39:29 [error] : Global error handler: Unexpected end of JSON input
+Metadata: {
+  "expose": true,
+  "statusCode": 400,
+  "status": 400,
+  "body": "\n\n\n\n\n\n\n\n\n\n\n\n",
+  "type": "entity.parse.failed",
+  "stack": "SyntaxError: Unexpected end of JSON input\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:169:10)\n    at parse (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:86:15)\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)"
+}
+2025-01-02 11:40:09 [error] : Global error handler: Unexpected end of JSON input
+Metadata: {
+  "expose": true,
+  "statusCode": 400,
+  "status": 400,
+  "body": "\n\n\n\n\n\n\n\n\n\n\n\n",
+  "type": "entity.parse.failed",
+  "stack": "SyntaxError: Unexpected end of JSON input\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:169:10)\n    at parse (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:86:15)\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)"
+}
+2025-01-02 11:42:38 [error] : Global error handler: Unexpected end of JSON input
+Metadata: {
+  "expose": true,
+  "statusCode": 400,
+  "status": 400,
+  "body": "\n\n\n\n\n\n\n\n\n\n\n\n",
+  "type": "entity.parse.failed",
+  "stack": "SyntaxError: Unexpected end of JSON input\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:169:10)\n    at parse (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:86:15)\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)"
+}
+2025-01-02 11:42:56 [error] : Global error handler: Unexpected non-whitespace character after JSON at position 231 (line 9 column 1)
+Metadata: {
+  "expose": true,
+  "statusCode": 400,
+  "status": 400,
+  "body": "{\n    \"title\": \"ai bs humaan\",\n    \"desc\": \"ai bs humaanai bs humaanai bs humaanai bs humaanai bs humaan\",\n    \"subject\": \"ai bs humaan\",\n    \"type\": \"ai bs humaan\",\n    \"deadline\": \"2025-01-02\",\n    \"couponCode\": \"ai bs humaan\"\n}\n{\n    \n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}",
+  "type": "entity.parse.failed",
+  "stack": "SyntaxError: Unexpected non-whitespace character after JSON at position 231 (line 9 column 1)\n    at JSON.parse (<anonymous>)\n    at parse (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:92:19)\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)"
+}
+2025-01-02 12:43:01 [error] : Global error handler: Unexpected token '"', ""{\"title\"... is not valid JSON
+Metadata: {
+  "expose": true,
+  "statusCode": 400,
+  "status": 400,
+  "body": "\"{\\\"title\\\":\\\"web development assignment\\\",\\\"description\\\":\\\"i want to get complete ofmy web development assignment \\\",\\\"subject\\\":\\\"computer science \\\",\\\"type\\\":\\\"assignment\\\",\\\"deadline\\\":1738195200}\"",
+  "type": "entity.parse.failed",
+  "stack": "SyntaxError: Unexpected token '\"', \"\"{\\\"title\\\"... is not valid JSON\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:169:10)\n    at parse (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:86:15)\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)"
+}
+2025-01-02 12:43:05 [error] : Global error handler: Unexpected token '"', ""{\"title\"... is not valid JSON
+Metadata: {
+  "expose": true,
+  "statusCode": 400,
+  "status": 400,
+  "body": "\"{\\\"title\\\":\\\"web development assignment\\\",\\\"description\\\":\\\"i want to get complete ofmy web development assignment \\\",\\\"subject\\\":\\\"computer science \\\",\\\"type\\\":\\\"assignment\\\",\\\"deadline\\\":1738195200}\"",
+  "type": "entity.parse.failed",
+  "stack": "SyntaxError: Unexpected token '\"', \"\"{\\\"title\\\"... is not valid JSON\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:169:10)\n    at parse (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:86:15)\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)"
+}
+2025-01-02 12:43:08 [error] : Global error handler: Unexpected token '"', ""{\"title\"... is not valid JSON
+Metadata: {
+  "expose": true,
+  "statusCode": 400,
+  "status": 400,
+  "body": "\"{\\\"title\\\":\\\"web development assignment\\\",\\\"description\\\":\\\"i want to get complete ofmy web development assignment \\\",\\\"subject\\\":\\\"computer science \\\",\\\"type\\\":\\\"assignment\\\",\\\"deadline\\\":1738195200}\"",
+  "type": "entity.parse.failed",
+  "stack": "SyntaxError: Unexpected token '\"', \"\"{\\\"title\\\"... is not valid JSON\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:169:10)\n    at parse (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:86:15)\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)"
+}
+2025-01-02 12:43:24 [error] : Global error handler: Unexpected token '"', ""{\"title\"... is not valid JSON
+Metadata: {
+  "expose": true,
+  "statusCode": 400,
+  "status": 400,
+  "body": "\"{\\\"title\\\":\\\"web development assignment\\\",\\\"description\\\":\\\"i want to get complete ofmy web development assignment \\\",\\\"subject\\\":\\\"computer science \\\",\\\"type\\\":\\\"assignment\\\",\\\"deadline\\\":1738195200}\"",
+  "type": "entity.parse.failed",
+  "stack": "SyntaxError: Unexpected token '\"', \"\"{\\\"title\\\"... is not valid JSON\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:169:10)\n    at parse (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:86:15)\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)"
+}
+2025-01-02 12:43:33 [error] : Global error handler: Unexpected token '"', ""{\"title\"... is not valid JSON
+Metadata: {
+  "expose": true,
+  "statusCode": 400,
+  "status": 400,
+  "body": "\"{\\\"title\\\":\\\"web development assignment\\\",\\\"description\\\":\\\"i want to get complete ofmy web development assignment \\\",\\\"subject\\\":\\\"computer science \\\",\\\"type\\\":\\\"assignment\\\",\\\"deadline\\\":1738195200}\"",
+  "type": "entity.parse.failed",
+  "stack": "SyntaxError: Unexpected token '\"', \"\"{\\\"title\\\"... is not valid JSON\n    at JSON.parse (<anonymous>)\n    at createStrictSyntaxError (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:169:10)\n    at parse (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\types\\json.js:86:15)\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)"
+}
+2025-01-02 13:12:54 [error] : Database query error: SQLITE_ERROR: no such column: o.created_at
+Metadata: {
+  "errno": 1,
+  "code": "SQLITE_ERROR",
+  "__augmented": true,
+  "stack": "Error: SQLITE_ERROR: no such column: o.created_at\n--> in Database#all('\\n' +\n  '                SELECT \\n' +\n  '                    o.orderid,\\n' +\n  '                    o.title,\\n' +\n  '                    o.descrip as description,\\n' +\n  '                    o.sub as subject,\\n' +\n  '                    o.typ as type,\\n' +\n  '                    o.deadline,\\n' +\n  '                    o.created_at as createdAt,\\n' +\n  '                    od.status,\\n' +\n  '                    ov.value\\n' +\n  '                FROM orders o\\n' +\n  '                INNER JOIN user_orders uo ON o.orderid = uo.orderid\\n' +\n  '                LEFT JOIN order_details od ON o.orderid = od.orderid\\n' +\n  '                LEFT JOIN orders_value ov ON o.orderid = ov.orderid\\n' +\n  '                WHERE uo.userid = ?\\n' +\n  '                ORDER BY o.orderid DESC\\n' +\n  '            ', [ 1 ], [Function (anonymous)])\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:42:21\n    at new Promise (<anonymous>)\n    at Database.query (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:41:16)\n    at Orders.getAllUserOrders (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Orders.js:266:42)\n    at async C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\routes\\OrdersRoute.js:135:24"
+}
+2025-01-02 13:12:54 [error] : Error getting user orders: SQLITE_ERROR: no such column: o.created_at
+Metadata: {
+  "errno": 1,
+  "code": "SQLITE_ERROR",
+  "__augmented": true,
+  "stack": "Error: SQLITE_ERROR: no such column: o.created_at\n--> in Database#all('\\n' +\n  '                SELECT \\n' +\n  '                    o.orderid,\\n' +\n  '                    o.title,\\n' +\n  '                    o.descrip as description,\\n' +\n  '                    o.sub as subject,\\n' +\n  '                    o.typ as type,\\n' +\n  '                    o.deadline,\\n' +\n  '                    o.created_at as createdAt,\\n' +\n  '                    od.status,\\n' +\n  '                    ov.value\\n' +\n  '                FROM orders o\\n' +\n  '                INNER JOIN user_orders uo ON o.orderid = uo.orderid\\n' +\n  '                LEFT JOIN order_details od ON o.orderid = od.orderid\\n' +\n  '                LEFT JOIN orders_value ov ON o.orderid = ov.orderid\\n' +\n  '                WHERE uo.userid = ?\\n' +\n  '                ORDER BY o.orderid DESC\\n' +\n  '            ', [ 1 ], [Function (anonymous)])\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:42:21\n    at new Promise (<anonymous>)\n    at Database.query (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:41:16)\n    at Orders.getAllUserOrders (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Orders.js:266:42)\n    at async C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\routes\\OrdersRoute.js:135:24"
+}
+2025-01-02 13:12:54 [error] : Error fetching orders: SQLITE_ERROR: no such column: o.created_at
+Metadata: {
+  "errno": 1,
+  "code": "SQLITE_ERROR",
+  "__augmented": true,
+  "stack": "Error: SQLITE_ERROR: no such column: o.created_at\n--> in Database#all('\\n' +\n  '                SELECT \\n' +\n  '                    o.orderid,\\n' +\n  '                    o.title,\\n' +\n  '                    o.descrip as description,\\n' +\n  '                    o.sub as subject,\\n' +\n  '                    o.typ as type,\\n' +\n  '                    o.deadline,\\n' +\n  '                    o.created_at as createdAt,\\n' +\n  '                    od.status,\\n' +\n  '                    ov.value\\n' +\n  '                FROM orders o\\n' +\n  '                INNER JOIN user_orders uo ON o.orderid = uo.orderid\\n' +\n  '                LEFT JOIN order_details od ON o.orderid = od.orderid\\n' +\n  '                LEFT JOIN orders_value ov ON o.orderid = ov.orderid\\n' +\n  '                WHERE uo.userid = ?\\n' +\n  '                ORDER BY o.orderid DESC\\n' +\n  '            ', [ 1 ], [Function (anonymous)])\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:42:21\n    at new Promise (<anonymous>)\n    at Database.query (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:41:16)\n    at Orders.getAllUserOrders (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Orders.js:266:42)\n    at async C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\routes\\OrdersRoute.js:135:24"
+}
+2025-01-02 13:13:44 [error] : Database query error: SQLITE_ERROR: no such column: o.created_at
+Metadata: {
+  "errno": 1,
+  "code": "SQLITE_ERROR",
+  "__augmented": true,
+  "stack": "Error: SQLITE_ERROR: no such column: o.created_at\n--> in Database#all('\\n' +\n  '                SELECT \\n' +\n  '                    o.orderid,\\n' +\n  '                    o.title,\\n' +\n  '                    o.descrip as description,\\n' +\n  '                    o.sub as subject,\\n' +\n  '                    o.typ as type,\\n' +\n  '                    o.deadline,\\n' +\n  '                    o.created_at as createdAt,\\n' +\n  '                    od.status,\\n' +\n  '                    ov.value\\n' +\n  '                FROM orders o\\n' +\n  '                INNER JOIN user_orders uo ON o.orderid = uo.orderid\\n' +\n  '                LEFT JOIN order_details od ON o.orderid = od.orderid\\n' +\n  '                LEFT JOIN orders_value ov ON o.orderid = ov.orderid\\n' +\n  '                WHERE uo.userid = ?\\n' +\n  '                ORDER BY o.orderid DESC\\n' +\n  '            ', [ 1 ], [Function (anonymous)])\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:42:21\n    at new Promise (<anonymous>)\n    at Database.query (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:41:16)\n    at Orders.getAllUserOrders (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Orders.js:266:42)\n    at async C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\routes\\OrdersRoute.js:135:24"
+}
+2025-01-02 13:13:44 [error] : Error getting user orders: SQLITE_ERROR: no such column: o.created_at
+Metadata: {
+  "errno": 1,
+  "code": "SQLITE_ERROR",
+  "__augmented": true,
+  "stack": "Error: SQLITE_ERROR: no such column: o.created_at\n--> in Database#all('\\n' +\n  '                SELECT \\n' +\n  '                    o.orderid,\\n' +\n  '                    o.title,\\n' +\n  '                    o.descrip as description,\\n' +\n  '                    o.sub as subject,\\n' +\n  '                    o.typ as type,\\n' +\n  '                    o.deadline,\\n' +\n  '                    o.created_at as createdAt,\\n' +\n  '                    od.status,\\n' +\n  '                    ov.value\\n' +\n  '                FROM orders o\\n' +\n  '                INNER JOIN user_orders uo ON o.orderid = uo.orderid\\n' +\n  '                LEFT JOIN order_details od ON o.orderid = od.orderid\\n' +\n  '                LEFT JOIN orders_value ov ON o.orderid = ov.orderid\\n' +\n  '                WHERE uo.userid = ?\\n' +\n  '                ORDER BY o.orderid DESC\\n' +\n  '            ', [ 1 ], [Function (anonymous)])\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:42:21\n    at new Promise (<anonymous>)\n    at Database.query (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:41:16)\n    at Orders.getAllUserOrders (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Orders.js:266:42)\n    at async C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\routes\\OrdersRoute.js:135:24"
+}
+2025-01-02 13:13:44 [error] : Error fetching orders: SQLITE_ERROR: no such column: o.created_at
+Metadata: {
+  "errno": 1,
+  "code": "SQLITE_ERROR",
+  "__augmented": true,
+  "stack": "Error: SQLITE_ERROR: no such column: o.created_at\n--> in Database#all('\\n' +\n  '                SELECT \\n' +\n  '                    o.orderid,\\n' +\n  '                    o.title,\\n' +\n  '                    o.descrip as description,\\n' +\n  '                    o.sub as subject,\\n' +\n  '                    o.typ as type,\\n' +\n  '                    o.deadline,\\n' +\n  '                    o.created_at as createdAt,\\n' +\n  '                    od.status,\\n' +\n  '                    ov.value\\n' +\n  '                FROM orders o\\n' +\n  '                INNER JOIN user_orders uo ON o.orderid = uo.orderid\\n' +\n  '                LEFT JOIN order_details od ON o.orderid = od.orderid\\n' +\n  '                LEFT JOIN orders_value ov ON o.orderid = ov.orderid\\n' +\n  '                WHERE uo.userid = ?\\n' +\n  '                ORDER BY o.orderid DESC\\n' +\n  '            ', [ 1 ], [Function (anonymous)])\n    at C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:42:21\n    at new Promise (<anonymous>)\n    at Database.query (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Database.js:41:16)\n    at Orders.getAllUserOrders (C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\models\\Orders.js:266:42)\n    at async C:\\Users\\nc157\\Projects\\All-Assignment-Help\\backend\\routes\\OrdersRoute.js:135:24"
+}

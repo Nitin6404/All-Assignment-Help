@@ -1,6 +1,19 @@
-import LoginForm from "@/components/auth/LoginForm";
+'use client';
+
+import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import LoginForm from '@/components/auth/LoginForm';
+import { useToaster } from '@/hooks/useToaster';
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const toast = useToaster();
+
+  useEffect(() => {
+    if (searchParams.get('expired') === 'true') {
+      toast.error('Your session has expired. Please log in again.');
+    }
+  }, [searchParams, toast]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

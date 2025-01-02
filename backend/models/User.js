@@ -1,5 +1,6 @@
 const Database = require("./Database");
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 
 class User {
@@ -80,6 +81,36 @@ class User {
         }
     }
 
+    async getUserById(id) {
+        const db = new Database();
+        logger.info('Getting user by ID', { id });
+        
+        try {
+            const sql = `SELECT * FROM users WHERE id = ?`;
+            const values = [id];
+            
+            logger.dbOperation('Get user by ID', { id, sql });
+
+            return new Promise((resolve, reject) => {
+                db.db.get(sql, values, function(err, row) {
+                    if (err) {
+                        logger.error('Error getting user', { error: err.message, id });
+                        reject(err);
+                        return;
+                    }
+                    logger.info('User found', { id });
+                    resolve(row);
+                });
+            });
+        } catch (error) {
+            logger.error('Error in getUserById', { error: error.message, id });
+            throw error;
+        } finally {
+            db.close();
+            logger.dbOperation('Close database connection', { operation: 'getUserById' });
+        }
+    }
+
     async UpdateContactByUserID(contact, userid) {
         const db = new Database();
         logger.info('Updating user contact', { userid, contact });
@@ -141,6 +172,48 @@ class User {
             db.close();
             logger.dbOperation('Close database connection', { operation: 'UpdatePasswordByUserID' });
         }
+    }
+
+    async userExists(email) {
+        const db = new Database();
+        logger.info('Checking if user exists', { email });
+        
+        try {
+            const sql = 'SELECT id FROM users WHERE email = ?';
+            
+            return new Promise((resolve, reject) => {
+                db.db.get(sql, [email], (err, row) => {
+                    if (err) {
+                        logger.error('Error checking user existence', { error: err.message, email });
+                        reject(err);
+                        return;
+                    }
+                    logger.info('User existence check completed', { exists: !!row, email });
+                    resolve(!!row);
+                });
+            });
+        } catch (error) {
+            logger.error('Error in userExists', { error: error.message, email });
+            throw error;
+        } finally {
+            db.close();
+            logger.dbOperation('Close database connection', { operation: 'userExists' });
+        }
+    }
+
+    generateAuthToken(user) {
+        logger.info('Generating auth token', { userId: user.id });
+        const token = jwt.sign(
+            { 
+                id: user.id,
+                email: user.email,
+                role: user.role 
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+        logger.info('Auth token generated successfully', { userId: user.id });
+        return token;
     }
 }
 
